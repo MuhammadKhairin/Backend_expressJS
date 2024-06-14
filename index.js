@@ -34,11 +34,19 @@ app.get("/", (req, res) => {
 	res.send("API Ready To GO!");
 });
 
+// Impor rute autentikasi
+const authRoutes = require('./auth/authRoutes.js');
+const { authenticateToken } = require ("./auth/authController.js")
+
+// Gunakan rute autentikasi
+app.use('/auth', authRoutes);
+
 const product = require("./routers/products");
 const transactions = require("./routers/transactions");
 
-app.use("/products", product);
-app.use("/transactions", transactions);
+// Protect /products route with authentication middleware
+app.use("/products", authenticateToken, product);
+app.use("/transactions", authenticateToken, transactions);
 
 app.listen(PORT, () => {
 	console.log(`Server running on http://localhost:${PORT}`);
